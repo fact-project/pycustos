@@ -1,0 +1,58 @@
+from twilio.rest import TwilioRestClient
+from urllib.parse import urlencode
+from .base import Notifier
+
+
+def build_url(url, params):
+    return url + '?' + urlencode(params)
+
+
+echo_url = 'http://twimlets.com/echo'
+message_url = 'http://twimlets.com/message'
+
+hangup_twiml = '''<Response>
+  <Hangup>
+</Response>
+'''
+hangup_url = build_url(echo_url, {'Twiml': hangup_twiml})
+
+
+class TwilioNotifier(Notifier):
+    def __init__(
+            self,
+            phone_number,
+            sid,
+            auth_token,
+            twilio_number,
+            ring_time=30,
+            twiml='message',
+            ):
+
+        self.phone_number = phone_number
+        self.client = TwilioRestClient(sid, auth_token)
+        self.twilio_number = twilio_number
+        self.ring_time = ring_time
+        self.twiml = 'message'
+
+        super().__init__()
+
+    def place_call(self, url):
+
+        self.call = self.client.calls.create(
+            url=url,
+            to=self.phone_number,
+            from_=self.twilio_number,
+            timeout=self.ring_time,
+        )
+
+    def notify(self, msg):
+        if self.twiml == 'message':
+            url = build_url(message_url, {'Message': msg.text})
+
+        elif self.twiml == 'hangup':
+            url = hangup_url
+
+        else:
+            url = build_url(echo_url, {'Twiml': self.twiml})
+
+        self.place_call(url)
