@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 
 class NotifierPool(Thread):
     '''
-    A pool of notifiers. The NotifierPool waits for
+    A pool of notifiers. The NotifierPool waits for messages in a queue.Queue
+    and sends them to notifiers.
     '''
     def __init__(self, queue, notifiers):
         self.queue = queue
