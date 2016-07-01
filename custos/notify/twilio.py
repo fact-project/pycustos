@@ -1,6 +1,10 @@
 from twilio.rest import TwilioRestClient
 from urllib.parse import urlencode
 from .base import Notifier
+import logging
+
+
+log = logging.getLogger(__name__)
 
 
 def build_url(url, params):
@@ -26,6 +30,7 @@ class TwilioNotifier(Notifier):
             twilio_number,
             ring_time=30,
             twiml='message',
+            **kwargs
             ):
 
         self.phone_number = phone_number
@@ -34,7 +39,7 @@ class TwilioNotifier(Notifier):
         self.ring_time = ring_time
         self.twiml = 'message'
 
-        super().__init__()
+        super().__init__(**kwargs)
 
     def place_call(self, url):
 
@@ -46,6 +51,7 @@ class TwilioNotifier(Notifier):
         )
 
     def notify(self, msg):
+        log.debug('Received message')
         if self.twiml == 'message':
             url = build_url(message_url, {'Message': msg.text})
 
@@ -55,4 +61,5 @@ class TwilioNotifier(Notifier):
         else:
             url = build_url(echo_url, {'Twiml': self.twiml})
 
+        log.debug('Placing call')
         self.place_call(url)

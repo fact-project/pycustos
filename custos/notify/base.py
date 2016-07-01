@@ -8,7 +8,7 @@ class Notifier(metaclass=ABCMeta):
         self.categories = set(categories)
 
     def handle_message(self, msg):
-        if self.categories.intersection(msg.categories) and msg.level > self.level:
+        if self.categories.intersection(msg.categories) and msg.level >= self.level:
             self.notify(msg)
 
     @abstractmethod

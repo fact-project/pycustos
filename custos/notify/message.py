@@ -2,10 +2,11 @@ from .levels import DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 
 class Message:
-    def __init__(self, text, level=INFO, image=None, categories=None):
+    def __init__(self, text, level=INFO, image=None, categories=('default', )):
         self.level = level
         self.text = text
         self.image = image
+        self.categories = set(categories)
 
     @classmethod
     def debug(cls, *args, **kwargs):

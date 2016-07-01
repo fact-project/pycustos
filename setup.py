@@ -10,7 +10,7 @@ setup(
     license='MIT',
     packages=[
         'custos',
-        'custos.check',
+        'custos.checks',
         'custos.notify',
         ],
     install_requires=[

@@ -1,10 +1,11 @@
 from threading import Thread, Event
+from abc import ABCMeta, abstractmethod
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Check(Thread):
+class Check(Thread, metaclass=ABCMeta):
     '''
     base class for checks
 
@@ -36,5 +37,6 @@ class Check(Thread):
     def stop(self):
         self.stop_event.set()
 
+    @abstractmethod
     def check(self):
-        raise NotImplementedError
+        pass
