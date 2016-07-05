@@ -1,6 +1,7 @@
 import telepot
 from io import BytesIO
 import logging
+import imghdr
 
 from .base import Notifier
 
@@ -43,7 +44,8 @@ class TelegramNotifier(Notifier):
         if isinstance(image, bytes):
             f = BytesIO(image)
             f.seek(0)
-            self.bot.sendPhoto(chat_id, ('image.png', f))
+            extension = imghdr.what(f)
+            self.bot.sendPhoto(chat_id, ('image.' + extension, f))
 
         elif isinstance(image, str):
             with open(image, 'rb') as f:
