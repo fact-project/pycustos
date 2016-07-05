@@ -1,2 +1,7 @@
 from .checks import Check
-from .notify import Notifier, NotifierPool, TwilioNotifier, Message, levels
+from .notify import Notifier
+from .notify import NotifierPool
+from .notify import TwilioNotifier
+from .notify import Message
+from .notify import levels
+from .notify import TelegramNotifier

@@ -2,7 +2,7 @@ from threading import Thread, Event
 from abc import ABCMeta, abstractmethod
 import logging
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class Check(Thread, metaclass=ABCMeta):
@@ -31,7 +31,7 @@ class Check(Thread, metaclass=ABCMeta):
             try:
                 self.check()
             except Exception as e:
-                logger.exception(e)
+                log.exception('Exception while running check')
             self.stop_event.wait(self.interval)
 
     def stop(self):
