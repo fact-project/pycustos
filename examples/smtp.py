@@ -34,7 +34,7 @@ if __name__ == '__main__':
     mail = SMTPNotifier(
         host='unimail.tu-dortmund.de',
         port=465,
-        subject='Notifier Test',
+        default_subject='Notifier Test',
         user=input('Unimail User:'),
         password=getpass('Unimail Password: '),
         sender='PyCustos',

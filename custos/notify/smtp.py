@@ -11,16 +11,16 @@ from .base import Notifier
 
 
 class SMTPNotifier(Notifier):
-    def __init__(self, host, port, user, password, sender, subject, **kwargs):
+    def __init__(self, host, port, user, password, sender, default_subject, **kwargs):
         self.sender = sender
-        self.subject = subject
+        self.default_subject = default_subject
         self.server = smtplib.SMTP_SSL(host, port)
         self.server.login(user, password)
         super().__init__(**kwargs)
 
     def notify(self, recipient, msg):
         mail = MIMEMultipart()
-        mail['Subject'] = msg.title if msg.title else 'Custos Notification'
+        mail['Subject'] = msg.title if msg.title else self.default_subject
         mail['From'] = self.sender
         mail['To'] = recipient
 
