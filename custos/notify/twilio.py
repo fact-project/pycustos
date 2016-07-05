@@ -1,4 +1,9 @@
-from twilio.rest import TwilioRestClient
+try:
+    from twilio.rest import TwilioRestClient
+    _has_twilio = True
+except ImportError:
+    _has_twilio = False
+
 from urllib.parse import urlencode
 from .base import Notifier
 import logging
@@ -31,6 +36,9 @@ class TwilioNotifier(Notifier):
             twiml='message',
             **kwargs
             ):
+
+        if _has_twilio is False:
+            raise ImportError('The twilio package is required for this Notifier')
 
         self.client = TwilioRestClient(sid, auth_token)
         self.twilio_number = twilio_number

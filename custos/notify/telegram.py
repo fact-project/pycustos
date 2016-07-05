@@ -1,4 +1,9 @@
-import telepot
+try:
+    import telepot
+    _has_telepot = True
+except ImportError:
+    _has_telepot = False
+
 from io import BytesIO
 import logging
 import imghdr
@@ -25,6 +30,8 @@ class TelegramNotifier(Notifier):
         :param level: The minimum level for messages to be relayed
         :type level: int
         '''
+        if _has_telepot is False:
+            raise ImportError('The telepot package is required for this Notifier')
         self.bot = telepot.Bot(token)
         super().__init__(**kwargs)
 
