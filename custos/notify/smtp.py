@@ -6,8 +6,12 @@ import mimetypes
 import imghdr
 from io import BytesIO
 import os
+import logging
 
 from .base import Notifier
+
+
+log = logging.getLogger(__name__)
 
 
 class SMTPNotifier(Notifier):
@@ -61,3 +65,4 @@ class SMTPNotifier(Notifier):
             to_addrs=recipient,
             msg=mail.as_string(),
         )
+        log.debug('Send mail to {}'.format(recipient))

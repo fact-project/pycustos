@@ -37,7 +37,7 @@ if __name__ == '__main__':
         default_subject='Notifier Test',
         user=input('Unimail User:'),
         password=getpass('Unimail Password: '),
-        sender='PyCustos',
+        sender='PyCustos <pycustos@local.host>',
         recipients=recipients,
         level=levels.INFO,
     )
