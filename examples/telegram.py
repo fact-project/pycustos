@@ -18,8 +18,16 @@ class HelloWorldCheck(Check):
     def check(self):
         self.queue.put(
             Message.info(
-                'Hello World',
+                'Hello Windows Users',
                 image=urlopen('http://bellard.org/bpg/lena30.jpg'),
+                category='Windows',
+            )
+        )
+        self.queue.put(
+            Message.info(
+                'Hello Linux Users',
+                image=urlopen('http://bellard.org/bpg/lena30.jpg'),
+                category='Linux',
             )
         )
         log.debug('message put into queue')
@@ -32,8 +40,9 @@ if __name__ == '__main__':
 
     telegram = TelegramNotifier(
         bot_token,
-        chat_ids=(12345, ),
+        recipients={'Linux': [12345, 2131], 'Windows': [112321, -123123]},
         level=levels.INFO,
+        categories={'Linux', 'Windows'},
     )
 
     pool = NotifierPool(

@@ -9,26 +9,35 @@ log = logging.getLogger(__name__)
 
 
 class TelegramNotifier(Notifier):
-    def __init__(self, token, chat_ids, **kwargs):
+    ''' A Notifier using the Telegram bot API via telepot '''
+    def __init__(self, token, **kwargs):
+        '''
+        Create a new TelegramNotifier
 
+        :param token: Your Bot's authentication token
+        :param recipients: The chatIDs or usernames that should
+                           be contacted by this Notifier
+
+        :type recipients: Iterable of recipients or dict mapping categories to recipients
+        :param categories: The message categories this Notifier should relay
+        :type categories: Iterable
+        :param level: The minimum level for messages to be relayed
+        :type level: int
+        '''
         self.bot = telepot.Bot(token)
-        self.chat_ids = list(chat_ids)
-
         super().__init__(**kwargs)
 
-    def notify(self, msg):
-        for chat_id in self.chat_ids:
+    def notify(self, recipient,  msg):
+        try:
+            self.bot.sendMessage(recipient, msg.text)
+        except:
+            log.exception('Could not send message')
 
-            try:
-                self.bot.sendMessage(chat_id, msg.text)
-            except:
-                log.exception('Could not send message')
-
-            try:
-                if msg.image:
-                    self.send_image(chat_id, msg.image)
-            except:
-                log.exception('Could not send image')
+        try:
+            if msg.image:
+                self.send_image(recipient, msg.image)
+        except:
+            log.exception('Could not send image')
 
     def send_image(self, chat_id, image):
         if isinstance(image, bytes):

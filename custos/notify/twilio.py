@@ -24,7 +24,6 @@ hangup_url = build_url(echo_url, {'Twiml': hangup_twiml})
 class TwilioNotifier(Notifier):
     def __init__(
             self,
-            phone_number,
             sid,
             auth_token,
             twilio_number,
@@ -33,7 +32,6 @@ class TwilioNotifier(Notifier):
             **kwargs
             ):
 
-        self.phone_number = phone_number
         self.client = TwilioRestClient(sid, auth_token)
         self.twilio_number = twilio_number
         self.ring_time = ring_time
@@ -41,16 +39,16 @@ class TwilioNotifier(Notifier):
 
         super().__init__(**kwargs)
 
-    def place_call(self, url):
+    def place_call(self, number, url):
 
         self.call = self.client.calls.create(
             url=url,
-            to=self.phone_number,
+            to=number,
             from_=self.twilio_number,
             timeout=self.ring_time,
         )
 
-    def notify(self, msg):
+    def notify(self, recipient,  msg):
         log.debug('Received message')
         if self.twiml == 'message':
             url = build_url(message_url, {'Message': msg.text})
@@ -62,4 +60,4 @@ class TwilioNotifier(Notifier):
             url = build_url(echo_url, {'Twiml': self.twiml})
 
         log.debug('Placing call')
-        self.place_call(url)
+        self.place_call(recipient, url)

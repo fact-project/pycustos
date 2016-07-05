@@ -27,10 +27,10 @@ if __name__ == '__main__':
     hello_world = HelloWorldCheck(interval=60, queue=message_queue)
 
     twilio = TwilioNotifier(
-        '+4978910',
         twilio_sid, twilio_auth_token, twilio_number,
-        level=levels.INFO,
         ring_time=10,
+        recipients=('+492345', ),
+        level=levels.INFO,
     )
 
     pool = NotifierPool(
