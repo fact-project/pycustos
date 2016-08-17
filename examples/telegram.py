@@ -1,5 +1,4 @@
-from custos import NotifierPool, Check, TelegramNotifier, Message, levels
-from queue import Queue
+from custos import Custos, IntervalCheck, TelegramNotifier, Message, levels
 from time import sleep
 import logging
 from urllib.request import urlopen
@@ -9,10 +8,8 @@ log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 log.addHandler(handler)
 
-bot_token = ''
 
-
-class HelloWorldCheck(Check):
+class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
@@ -30,29 +27,26 @@ class HelloWorldCheck(Check):
                 category='Linux',
             )
         )
-        log.debug('message put into queue')
 
 
 if __name__ == '__main__':
     log.debug('Example started')
-    message_queue = Queue()
-    hello_world = HelloWorldCheck(interval=30, queue=message_queue)
+    hello_world = HelloWorldCheck(interval=30)
 
     telegram = TelegramNotifier(
-        bot_token,
+        token=input('Telegram Bot Token: ').strip(),
         recipients={'Linux': [12345, 2131], 'Windows': [112321, -123123]},
         level=levels.INFO,
         categories={'Linux', 'Windows'},
     )
 
-    pool = NotifierPool(
-        message_queue,
-        notifiers=(telegram, ),
+    custos = Custos(
+        checks=[hello_world],
+        notifiers=[telegram],
     )
 
-    hello_world.start()
-    pool.start()
-    log.debug('All Checks runnig')
+    custos.start()
+    log.debug('All Checks running')
 
     # keep main Thread alive:
 
@@ -60,5 +54,4 @@ if __name__ == '__main__':
         while True:
             sleep(10)
     except (SystemExit, KeyboardInterrupt):
-        hello_world.stop()
-        pool.stop()
+        custos.stop()

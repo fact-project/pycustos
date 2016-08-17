@@ -1,5 +1,4 @@
-from custos import NotifierPool, Check, TwilioNotifier, Message, levels
-from queue import Queue
+from custos import Custos, IntervalCheck, TwilioNotifier, Message, levels
 from time import sleep
 import logging
 
@@ -13,7 +12,7 @@ twilio_auth_token = 'abcd'
 twilio_number = '+4912345'
 
 
-class HelloWorldCheck(Check):
+class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
@@ -23,8 +22,7 @@ class HelloWorldCheck(Check):
 
 if __name__ == '__main__':
     log.debug('Example started')
-    message_queue = Queue()
-    hello_world = HelloWorldCheck(interval=60, queue=message_queue)
+    hello_world = HelloWorldCheck(interval=60)
 
     twilio = TwilioNotifier(
         twilio_sid, twilio_auth_token, twilio_number,
@@ -33,13 +31,12 @@ if __name__ == '__main__':
         level=levels.INFO,
     )
 
-    pool = NotifierPool(
-        message_queue,
-        notifiers=(twilio, ),
+    custos = Custos(
+        checks=[hello_world],
+        notifiers=[twilio],
     )
 
-    hello_world.start()
-    pool.start()
+    custos.start()
     log.debug('All Checks runnig')
 
     # keep main Thread alive:
@@ -48,5 +45,4 @@ if __name__ == '__main__':
         while True:
             sleep(10)
     except (SystemExit, KeyboardInterrupt):
-        hello_world.stop()
-        pool.stop()
+        custos.stop()

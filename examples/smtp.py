@@ -1,5 +1,4 @@
-from custos import NotifierPool, Check, SMTPNotifier, Message, levels
-from queue import Queue
+from custos import Custos, IntervalCheck, SMTPNotifier, Message, levels
 from time import sleep
 import logging
 from urllib.request import urlopen
@@ -10,10 +9,8 @@ log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 log.addHandler(handler)
 
-recipients = []
 
-
-class HelloWorldCheck(Check):
+class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
@@ -23,32 +20,35 @@ class HelloWorldCheck(Check):
                 image=urlopen('http://bellard.org/bpg/lena30.jpg'),
             )
         )
-        log.debug('message put into queue')
 
 
 if __name__ == '__main__':
-    log.debug('Example started')
-    message_queue = Queue()
-    hello_world = HelloWorldCheck(interval=30, queue=message_queue)
+    hello_world = HelloWorldCheck(interval=30)
+
+    recipients = []
+    print('Please add your first recipient')
+    while True:
+        recipients.append(input('Email address: '))
+        if not input('Add another recipient? [y,n]: ').lower().startswith('y'):
+            break
 
     mail = SMTPNotifier(
         host='unimail.tu-dortmund.de',
         port=465,
         default_subject='Notifier Test',
-        user=input('Unimail User:'),
+        user=input('Unimail User: '),
         password=getpass('Unimail Password: '),
         sender='PyCustos <pycustos@local.host>',
         recipients=recipients,
         level=levels.INFO,
     )
 
-    pool = NotifierPool(
-        message_queue,
-        notifiers=(mail, ),
+    custos = Custos(
+        checks=[hello_world],
+        notifiers=[mail],
     )
 
-    hello_world.start()
-    pool.start()
+    custos.start()
     log.debug('All Checks runnig')
 
     # keep main Thread alive:
@@ -57,5 +57,4 @@ if __name__ == '__main__':
         while True:
             sleep(10)
     except (SystemExit, KeyboardInterrupt):
-        hello_world.stop()
-        pool.stop()
+        custos.stop()

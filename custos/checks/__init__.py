@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 class Check(Thread, metaclass=ABCMeta):
     '''
-    base class for checks
+    Abstract base class for checks.
 
     Subclasses need to implement the check method.
     This method has to push `Message` instance into
@@ -19,13 +19,37 @@ class Check(Thread, metaclass=ABCMeta):
     The thread has to be started with the .start() method,
     and will terminate after .stop() is called.
     '''
-    def __init__(self, queue, interval):
+    def __init__(self, interval=None, queue=None):
         self.queue = queue
         self.interval = interval
         self.stop_event = Event()
 
         super(Check, self).__init__()
 
+    def stop(self):
+        self.stop_event.set()
+
+    def start(self):
+        if self.queue is None:
+            msg = (
+                'queue not set. '
+                'If you use a Check without the Custos class, you need to pass a Queue'
+            )
+            raise ValueError(msg)
+
+        super().start()
+        log.info('Check %s running', self.__class__.__name__)
+
+    @abstractmethod
+    def check(self):
+        pass
+
+    @abstractmethod
+    def run(self):
+        pass
+
+
+class IntervalCheck(Check, metaclass=ABCMeta):
     def run(self):
         while not self.stop_event.is_set():
             try:
@@ -34,9 +58,4 @@ class Check(Thread, metaclass=ABCMeta):
                 log.exception('Exception while running check')
             self.stop_event.wait(self.interval)
 
-    def stop(self):
-        self.stop_event.set()
-
-    @abstractmethod
-    def check(self):
-        pass
+        log.info('Check %s stopped', self.__class__.__name__)
