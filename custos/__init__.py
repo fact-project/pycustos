@@ -9,6 +9,7 @@ from .notify import SMTPNotifier
 from .notify import Message
 from .notify import levels
 from .notify import TelegramNotifier
+from .notify import ConsoleNotifier
 
 
 log = logging.getLogger(__name__)
