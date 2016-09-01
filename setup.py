@@ -16,6 +16,9 @@ setup(
     install_requires=[
         'requests',         # in anaconda
     ],
+    test_requires=[
+        'pytest',
+    ],
     entry_points={
         'console_scripts': [],
     },
