@@ -14,16 +14,16 @@ class MockCheck(IntervalCheck):
         #check whether condition fails or not
         self.queue.put(
             Message.info(
-                'Hello, World!',
+                'Hello Unit Test!',
             )
         )
 
-def test_stop_flag():
+def test_custos_lifecycle():
     test_check = MockCheck(interval=1)
 
     console = ConsoleNotifier(
         level=levels.INFO,
-        recipients=['test_1', 'test_2'],
+        recipients=['test_1'],
     )
 
     custos = Custos(
@@ -48,4 +48,4 @@ def test_stop_flag():
     assert custos.is_alive() == False
 
 if __name__ == '__main__':
-    test_stop_flag()
+    test_custos_lifecycle()
