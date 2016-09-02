@@ -58,9 +58,6 @@ def test_check_lifecycle():
     for check in custos.checks:
         assert check.is_alive() == False
 
-    # assert custos.stop_event.is_set()
-    # sleep(2)
-    # assert custos.is_alive() == False
 
 
 def test_custos_lifecycle():
@@ -92,6 +89,7 @@ def test_custos_lifecycle():
     sleep(2)
     assert custos.is_alive() == False
 
+
 if __name__ == '__main__':
     test_check_lifecycle()
-    # test_custos_lifecycle()
+    test_custos_lifecycle()
