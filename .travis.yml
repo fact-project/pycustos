@@ -19,4 +19,4 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION
   - pip install .
 
-script: py.test -v
+script: py.test -v .
