@@ -18,6 +18,51 @@ class MockCheck(IntervalCheck):
             )
         )
 
+
+
+def test_check_lifecycle():
+    test_check_1 = MockCheck(interval=1)
+    test_check_2 = MockCheck(interval=1.2)
+
+    console = ConsoleNotifier(
+        level=levels.INFO,
+        recipients=['test_check_cycle'],
+    )
+
+    custos = Custos(
+        checks=[test_check_1, test_check_2],
+        notifiers=[console],
+    )
+
+
+    for check in custos.checks:
+        assert check.is_alive() == False
+
+    custos.start()
+
+    for check in custos.checks:
+        assert check.is_alive() == True
+
+
+    log.debug('Sleeping in main thread for 2 seconds')
+    sleep(2)
+    log.debug('Sleep finished')
+    #
+    custos.stop()
+
+    for check in custos.checks:
+        assert check.stop_event.is_set() == True
+
+    sleep(1)
+
+    for check in custos.checks:
+        assert check.is_alive() == False
+
+    # assert custos.stop_event.is_set()
+    # sleep(2)
+    # assert custos.is_alive() == False
+
+
 def test_custos_lifecycle():
     test_check = MockCheck(interval=1)
 
@@ -48,4 +93,5 @@ def test_custos_lifecycle():
     assert custos.is_alive() == False
 
 if __name__ == '__main__':
-    test_custos_lifecycle()
+    test_check_lifecycle()
+    # test_custos_lifecycle()
