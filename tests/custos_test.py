@@ -7,17 +7,17 @@ log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 log.addHandler(handler)
 
+
 class MockCheck(IntervalCheck):
     ''' This check just sends a message each time its run. '''
 
     def check(self):
-        #check whether condition fails or not
+        # check whether condition fails or not
         self.queue.put(
             Message.info(
                 'Hello Unit Test!',
             )
         )
-
 
 
 def test_check_lifecycle():
@@ -34,15 +34,13 @@ def test_check_lifecycle():
         notifiers=[console],
     )
 
-
     for check in custos.checks:
-        assert check.is_alive() == False
+        assert not check.is_alive()
 
     custos.start()
 
     for check in custos.checks:
-        assert check.is_alive() == True
-
+        assert check.is_alive()
 
     log.debug('Sleeping in main thread for 2 seconds')
     sleep(2)
@@ -51,13 +49,12 @@ def test_check_lifecycle():
     custos.stop()
 
     for check in custos.checks:
-        assert check.stop_event.is_set() == True
+        assert check.stop_event.is_set()
 
     sleep(1)
 
     for check in custos.checks:
-        assert check.is_alive() == False
-
+        assert not check.is_alive()
 
 
 def test_custos_lifecycle():
@@ -73,10 +70,10 @@ def test_custos_lifecycle():
         notifiers=[console],
     )
 
-    assert custos.is_alive() == False
+    assert not custos.is_alive()
     custos.start()
 
-    assert custos.is_alive() == True
+    assert custos.is_alive()
 
     log.debug('All Checks runnig')
     log.debug('Sleeping in main thread for 2 seconds')
@@ -87,7 +84,7 @@ def test_custos_lifecycle():
     sleep(1)
     assert custos.stop_event.is_set()
     sleep(2)
-    assert custos.is_alive() == False
+    assert not custos.is_alive()
 
 
 if __name__ == '__main__':
