@@ -6,14 +6,14 @@ log = logging.getLogger(__name__)
 
 
 class ConsoleNotifier(Notifier):
+    '''
+    A simple notifier class to output notifications to the console.
+    '''
     def notify(self, recipient, msg):
-        if msg.level == logging.INFO:
-            log.info('Message: {}    For: {}'.format(msg.text, recipient))
-        if msg.level == logging.DEBUG:
-            log.debug('Message: {}    For: {}'.format(msg.text, recipient))
-        if msg.level == logging.WARN:
-            log.warn('Message: {}    For: {}'.format(msg.text, recipient))
-        if msg.level == logging.CRITICAL:
-            log.critical('Message: {}    For: {}'.format(msg.text, recipient))
-        if msg.level == logging.ERROR:
-            log.error('Message: {}    For: {}'.format(msg.text, recipient))
+        print(
+            'Message: {}    For: {}   With level:{}'.format(
+                msg.text,
+                recipient,
+                msg.level
+                )
+            )
