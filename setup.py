@@ -14,7 +14,8 @@ setup(
         'custos.notify',
         ],
     install_requires=[
-        'requests',         # in anaconda
+        'requests',
+        'apscheduler',
     ],
     test_requires=[
         'pytest',
