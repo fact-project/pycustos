@@ -21,7 +21,7 @@ class HelloWorldCheck(ScheduledCheck):
 
 if __name__ == '__main__':
     hello_world = HelloWorldCheck(
-        scheduler_args={'trigger': 'cron', 'hour': 17, 'minute': 25}
+        trigger='cron', hour=9, minute=26,
     )
 
     console = ConsoleNotifier(

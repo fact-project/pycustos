@@ -49,6 +49,11 @@ class Check(Thread, metaclass=ABCMeta):
 
 
 class IntervalCheck(Check, metaclass=ABCMeta):
+    '''
+    Abstract base class for a check that runs every interval seconds
+
+    Child classes need to implement the check method.
+    '''
     def __init__(self, interval=None, queue=None):
         self.interval = interval
         super().__init__(queue=queue)
@@ -65,13 +70,25 @@ class IntervalCheck(Check, metaclass=ABCMeta):
 
 
 class ScheduledCheck(Check, metaclass=ABCMeta):
-    def __init__(self, scheduler_args, queue=None):
+    '''
+    An abstract base class for a check that runs based on
+    the Scheduler from apscheduler
+
+    Child classes need to implement the check method
+    '''
+    def __init__(self, queue=None, **kwargs):
+        '''
+        Create a new instance of this Check
+        The kwargs are handed over to apscheduler.blocking.BlockingScheduler.add_job
+        and decide when the checks are run. For example `trigger='cron', hour=8` will
+        run this check every day at 8 o'clock
+        '''
         super().__init__(queue=queue)
 
         self.scheduler = BlockingScheduler(
             job_defaults={'misfire_grace_time': 5*60}
         )
-        self.scheduler.add_job(self.check, **scheduler_args)
+        self.scheduler.add_job(self.check, **kwargs)
 
     def run(self):
         self.scheduler.start()
