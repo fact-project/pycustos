@@ -1,5 +1,6 @@
 from threading import Thread, Event
 from abc import ABCMeta, abstractmethod
+from apscheduler.schedulers.background import BlockingScheduler
 import logging
 
 log = logging.getLogger(__name__)
@@ -19,15 +20,9 @@ class Check(Thread, metaclass=ABCMeta):
     The thread has to be started with the .start() method,
     and will terminate after .stop() is called.
     '''
-    def __init__(self, interval=None, queue=None):
+    def __init__(self, queue=None):
         self.queue = queue
-        self.interval = interval
-        self.stop_event = Event()
-
-        super(Check, self).__init__()
-
-    def stop(self):
-        self.stop_event.set()
+        super().__init__()
 
     def start(self):
         if self.queue is None:
@@ -41,6 +36,10 @@ class Check(Thread, metaclass=ABCMeta):
         log.info('Check %s running', self.__class__.__name__)
 
     @abstractmethod
+    def stop(self):
+        pass
+
+    @abstractmethod
     def check(self):
         pass
 
@@ -50,6 +49,19 @@ class Check(Thread, metaclass=ABCMeta):
 
 
 class IntervalCheck(Check, metaclass=ABCMeta):
+    '''
+    Abstract base class for a check that runs every interval seconds
+
+    Child classes need to implement the check method.
+    '''
+    def __init__(self, interval=None, queue=None):
+        self.interval = interval
+        self.stop_event = Event()
+        super().__init__(queue=queue)
+
+    def stop(self):
+        self.stop_event.set()
+
     def run(self):
         while not self.stop_event.is_set():
             try:
@@ -59,3 +71,31 @@ class IntervalCheck(Check, metaclass=ABCMeta):
             self.stop_event.wait(self.interval)
 
         log.info('Check %s stopped', self.__class__.__name__)
+
+
+class ScheduledCheck(Check, metaclass=ABCMeta):
+    '''
+    An abstract base class for a check that runs based on
+    the Scheduler from apscheduler
+
+    Child classes need to implement the check method
+    '''
+    def __init__(self, queue=None, **kwargs):
+        '''
+        Create a new instance of this Check
+        The kwargs are handed over to apscheduler.blocking.BlockingScheduler.add_job
+        and decide when the checks are run. For example `trigger='cron', hour=8` will
+        run this check every day at 8 o'clock
+        '''
+        super().__init__(queue=queue)
+
+        self.scheduler = BlockingScheduler(
+            job_defaults={'misfire_grace_time': 5*60}
+        )
+        self.scheduler.add_job(self.check, **kwargs)
+
+    def run(self):
+        self.scheduler.start()
+
+    def stop(self):
+        self.scheduler.shutdown()

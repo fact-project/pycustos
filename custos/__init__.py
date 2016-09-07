@@ -2,7 +2,7 @@ from queue import Empty, Queue
 from threading import Thread, Event
 import logging
 
-from .checks import Check, IntervalCheck
+from .checks import Check, IntervalCheck, ScheduledCheck
 from .notify import Notifier
 from .notify import TwilioNotifier
 from .notify import SMTPNotifier
