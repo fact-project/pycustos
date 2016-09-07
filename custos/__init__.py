@@ -10,6 +10,7 @@ from .notify import Message
 from .notify import levels
 from .notify import TelegramNotifier
 from .notify import ConsoleNotifier
+from .notify import HTTPNotifier
 
 
 log = logging.getLogger(__name__)

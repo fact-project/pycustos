@@ -12,3 +12,13 @@ class Message:
         self.category = category
         self.check = check
 
+    def to_dict(self):
+        return {
+            'level': self.level,
+            'timestamp': self.timestamp,
+            'text': self.text,
+            'title': self.title,
+            'category': self.category,
+            'image': self.image,
+            'check': self.check,
+        }
