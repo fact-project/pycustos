@@ -22,11 +22,7 @@ class Check(Thread, metaclass=ABCMeta):
     '''
     def __init__(self, queue=None):
         self.queue = queue
-        self.stop_event = Event()
         super().__init__()
-
-    def stop(self):
-        self.stop_event.set()
 
     def start(self):
         if self.queue is None:
@@ -38,6 +34,10 @@ class Check(Thread, metaclass=ABCMeta):
 
         super().start()
         log.info('Check %s running', self.__class__.__name__)
+
+    @abstractmethod
+    def stop(self):
+        pass
 
     @abstractmethod
     def check(self):
@@ -56,7 +56,11 @@ class IntervalCheck(Check, metaclass=ABCMeta):
     '''
     def __init__(self, interval=None, queue=None):
         self.interval = interval
+        self.stop_event = Event()
         super().__init__(queue=queue)
+
+    def stop(self):
+        self.stop_event.set()
 
     def run(self):
         while not self.stop_event.is_set():
