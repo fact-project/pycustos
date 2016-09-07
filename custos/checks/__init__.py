@@ -1,6 +1,8 @@
 from threading import Thread, Event
 from abc import ABCMeta, abstractmethod
 from apscheduler.schedulers.background import BlockingScheduler
+from ..notify.message import Message
+from ..notify.levels import DEBUG, INFO, WARNING, ERROR, CRITICAL
 import logging
 
 log = logging.getLogger(__name__)
@@ -34,6 +36,31 @@ class Check(Thread, metaclass=ABCMeta):
 
         super().start()
         log.info('Check %s running', self.__class__.__name__)
+
+    def debug(self, *args, **kwargs):
+        self.queue.put(
+            Message(*args, level=DEBUG, check=self.__class__.__name__, **kwargs)
+        )
+
+    def info(self, *args, **kwargs):
+        self.queue.put(
+            Message(*args, level=INFO, check=self.__class__.__name__, **kwargs)
+        )
+
+    def warning(self, *args, **kwargs):
+        self.queue.put(
+            Message(*args, level=WARNING, check=self.__class__.__name__, **kwargs)
+        )
+
+    def error(self, *args, **kwargs):
+        self.queue.put(
+            Message(*args, level=ERROR, check=self.__class__.__name__, **kwargs)
+        )
+
+    def critical(self, *args, **kwargs):
+        self.queue.put(
+            Message(*args, level=CRITICAL, check=self.__class__.__name__, **kwargs)
+        )
 
     @abstractmethod
     def stop(self):

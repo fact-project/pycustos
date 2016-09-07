@@ -1,4 +1,4 @@
-from custos import Custos, ScheduledCheck, ConsoleNotifier, Message, levels
+from custos import Custos, ScheduledCheck, ConsoleNotifier, levels
 from time import sleep
 import logging
 
@@ -12,11 +12,7 @@ class HelloWorldCheck(ScheduledCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
-        self.queue.put(
-            Message.info(
-                'Hello, World!',
-            )
-        )
+        self.info('Hello, World!')
 
 
 if __name__ == '__main__':

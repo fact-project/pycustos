@@ -1,4 +1,4 @@
-from custos import Custos, IntervalCheck, SMTPNotifier, Message, levels
+from custos import Custos, IntervalCheck, SMTPNotifier, levels
 from time import sleep
 import logging
 from urllib.request import urlopen
@@ -14,11 +14,9 @@ class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
-        self.queue.put(
-            Message.info(
-                'Hello, World!',
-                image=urlopen('http://bellard.org/bpg/lena30.jpg'),
-            )
+        self.info(
+            'Hello, World!',
+            image=urlopen('http://bellard.org/bpg/lena30.jpg'),
         )
 
 
