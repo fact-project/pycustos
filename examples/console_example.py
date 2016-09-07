@@ -1,4 +1,4 @@
-from custos import Custos, IntervalCheck, ConsoleNotifier, Message, levels
+from custos import Custos, IntervalCheck, ConsoleNotifier, levels
 from time import sleep
 import logging
 
@@ -12,16 +12,11 @@ class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
-        self.queue.put(
-            Message.info(
-                'Hello, World!',
-            )
-        )
+        self.info('Hello, World!')
 
 
 if __name__ == '__main__':
     hello_world = HelloWorldCheck(interval=5)
-
 
     console = ConsoleNotifier(
         level=levels.INFO,
@@ -37,7 +32,6 @@ if __name__ == '__main__':
     log.debug('All Checks runnig')
 
     # keep main Thread alive:
-
     try:
         while True:
             sleep(10)

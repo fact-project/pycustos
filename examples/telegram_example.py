@@ -1,4 +1,4 @@
-from custos import Custos, IntervalCheck, TelegramNotifier, Message, levels
+from custos import Custos, IntervalCheck, TelegramNotifier, levels
 from time import sleep
 import logging
 from urllib.request import urlopen
@@ -13,19 +13,15 @@ class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
-        self.queue.put(
-            Message.info(
-                'Hello Windows Users',
-                image=urlopen('http://bellard.org/bpg/lena30.jpg'),
-                category='Windows',
-            )
+        self.info(
+            'Hello Windows Users',
+            image=urlopen('http://bellard.org/bpg/lena30.jpg'),
+            category='Windows',
         )
-        self.queue.put(
-            Message.info(
-                'Hello Linux Users',
-                image=urlopen('http://bellard.org/bpg/lena30.jpg'),
-                category='Linux',
-            )
+        self.info(
+            'Hello Linux Users',
+            image=urlopen('http://bellard.org/bpg/lena30.jpg'),
+            category='Linux',
         )
 
 

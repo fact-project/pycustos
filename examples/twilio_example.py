@@ -1,4 +1,4 @@
-from custos import Custos, IntervalCheck, TwilioNotifier, Message, levels
+from custos import Custos, IntervalCheck, TwilioNotifier, levels
 from time import sleep
 import logging
 
@@ -16,7 +16,7 @@ class HelloWorldCheck(IntervalCheck):
     ''' This check just sends Hello World messages '''
 
     def check(self):
-        self.queue.put(Message.info('Hello World'))
+        self.info('Hello World')
         log.debug('message put into queue')
 
 
