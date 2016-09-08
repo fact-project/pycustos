@@ -16,7 +16,7 @@ from .notify import HTTPNotifier
 log = logging.getLogger(__name__)
 
 
-class Custos(Thread):
+class Custos:
     '''
     The custos class holds checks and notifiers and sticks them together.
 
@@ -29,16 +29,14 @@ class Custos(Thread):
             check.queue = self.queue
         self.stop_event = Event()
 
-        super().__init__()
-
     def start(self):
         for check in self.checks:
             check.start()
 
-        super().start()
         log.info('%s running', self.__class__.__name__)
 
     def run(self):
+        self.start()
         while not self.stop_event.is_set():
             try:
                 message = self.queue.get(block=True, timeout=1)
@@ -53,9 +51,15 @@ class Custos(Thread):
                         '%s failed to handle message',
                         notifier.__class__.__name__
                     )
-        log.info('%s stopped', self.__class__.__name__)
 
     def stop(self):
         for check in self.checks:
             check.stop()
         self.stop_event.set()
+        log.info('%s stopped', self.__class__.__name__)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop()

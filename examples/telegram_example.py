@@ -1,5 +1,4 @@
 from custos import Custos, IntervalCheck, TelegramNotifier, levels
-from time import sleep
 import logging
 from urllib.request import urlopen
 
@@ -41,13 +40,5 @@ if __name__ == '__main__':
         notifiers=[telegram],
     )
 
-    custos.start()
-    log.debug('All Checks running')
-
-    # keep main Thread alive:
-
-    try:
-        while True:
-            sleep(10)
-    except (SystemExit, KeyboardInterrupt):
-        custos.stop()
+    with Custos(checks=[hello_world], notifiers=[telegram]) as custos:
+        custos.run()

@@ -1,5 +1,4 @@
 from custos import Custos, IntervalCheck, SMTPNotifier, levels
-from time import sleep
 import logging
 from urllib.request import urlopen
 from getpass import getpass
@@ -41,18 +40,5 @@ if __name__ == '__main__':
         level=levels.INFO,
     )
 
-    custos = Custos(
-        checks=[hello_world],
-        notifiers=[mail],
-    )
-
-    custos.start()
-    log.debug('All Checks runnig')
-
-    # keep main Thread alive:
-
-    try:
-        while True:
-            sleep(10)
-    except (SystemExit, KeyboardInterrupt):
-        custos.stop()
+    with Custos(checks=[hello_world], notifiers=[mail]) as custos:
+        custos.run()
