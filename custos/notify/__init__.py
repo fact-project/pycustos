@@ -5,3 +5,4 @@ from .message import Message
 from .smtp import SMTPNotifier
 from .http import HTTPNotifier
 from .console import ConsoleNotifier
+from .log import LogNotifier
