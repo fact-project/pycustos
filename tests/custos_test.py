@@ -1,6 +1,7 @@
 from custos import Custos, Message, IntervalCheck, ConsoleNotifier, levels
 from time import sleep
 import logging
+from threading import Thread
 
 log = logging.getLogger('custos')
 log.setLevel(logging.DEBUG)
@@ -37,7 +38,9 @@ def test_check_lifecycle():
     for check in custos.checks:
         assert not check.is_alive()
 
-    custos.start()
+    t = Thread(target=custos.run)
+    t.start()
+    sleep(1)
 
     for check in custos.checks:
         assert check.is_alive()
@@ -45,7 +48,7 @@ def test_check_lifecycle():
     log.debug('Sleeping in main thread for 2 seconds')
     sleep(2)
     log.debug('Sleep finished')
-    #
+
     custos.stop()
 
     for check in custos.checks:
@@ -55,38 +58,3 @@ def test_check_lifecycle():
 
     for check in custos.checks:
         assert not check.is_alive()
-
-
-def test_custos_lifecycle():
-    test_check = MockCheck(interval=1)
-
-    console = ConsoleNotifier(
-        level=levels.INFO,
-        recipients=['test_1'],
-    )
-
-    custos = Custos(
-        checks=[test_check],
-        notifiers=[console],
-    )
-
-    assert not custos.is_alive()
-    custos.start()
-
-    assert custos.is_alive()
-
-    log.debug('All Checks runnig')
-    log.debug('Sleeping in main thread for 2 seconds')
-    sleep(2)
-    log.debug('Sleep finished')
-
-    custos.stop()
-    sleep(1)
-    assert custos.stop_event.is_set()
-    sleep(2)
-    assert not custos.is_alive()
-
-
-if __name__ == '__main__':
-    test_check_lifecycle()
-    test_custos_lifecycle()

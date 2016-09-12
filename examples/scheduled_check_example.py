@@ -1,5 +1,4 @@
 from custos import Custos, ScheduledCheck, ConsoleNotifier, levels
-from time import sleep
 import logging
 
 log = logging.getLogger('custos')
@@ -25,18 +24,5 @@ if __name__ == '__main__':
         recipients=['Me', 'You', 'Hans'],
     )
 
-    custos = Custos(
-        checks=[hello_world],
-        notifiers=[console],
-    )
-
-    custos.start()
-    log.debug('All Checks runnig')
-
-    # keep main Thread alive:
-
-    try:
-        while True:
-            sleep(10)
-    except (SystemExit, KeyboardInterrupt):
-        custos.stop()
+    with Custos(checks=[hello_world], notifiers=[console]) as custos:
+        custos.run()

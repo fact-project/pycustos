@@ -1,5 +1,4 @@
 from custos import Custos, IntervalCheck, TwilioNotifier, levels
-from time import sleep
 import logging
 
 log = logging.getLogger('custos')
@@ -31,18 +30,5 @@ if __name__ == '__main__':
         level=levels.INFO,
     )
 
-    custos = Custos(
-        checks=[hello_world],
-        notifiers=[twilio],
-    )
-
-    custos.start()
-    log.debug('All Checks runnig')
-
-    # keep main Thread alive:
-
-    try:
-        while True:
-            sleep(10)
-    except (SystemExit, KeyboardInterrupt):
-        custos.stop()
+    with Custos(checks=[hello_world], notifiers=[twilio]) as custos:
+        custos.run()
