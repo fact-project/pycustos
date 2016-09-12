@@ -40,12 +40,15 @@ class Custos:
         while not self.stop_event.is_set():
             try:
                 message = self.queue.get(block=True, timeout=1)
+                print(message.text)
             except Empty:
                 continue
 
             for notifier in self.notifiers:
                 try:
                     notifier.handle_message(message)
+                except (KeyboardInterrupt, SystemExit):
+                    raise
                 except:
                     log.exception(
                         '%s failed to handle message',
