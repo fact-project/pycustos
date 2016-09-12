@@ -33,8 +33,12 @@ class Notifier(metaclass=ABCMeta):
                 if isinstance(self.recipients, Mapping):
                     log.debug('Recipients is a Mapping')
                     recipients = self.recipients[msg.category]
+                elif callable(self.recipients):
+                    recipients = self.recipients(msg.category)
                 else:
                     recipients = self.recipients
+
+
 
                 for recipient in recipients:
                     try:

@@ -46,6 +46,8 @@ class Custos:
             for notifier in self.notifiers:
                 try:
                     notifier.handle_message(message)
+                except (KeyboardInterrupt, SystemExit):
+                    raise
                 except:
                     log.exception(
                         '%s failed to handle message',
