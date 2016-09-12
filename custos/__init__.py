@@ -40,7 +40,6 @@ class Custos:
         while not self.stop_event.is_set():
             try:
                 message = self.queue.get(block=True, timeout=1)
-                print(message.text)
             except Empty:
                 continue
 
