@@ -42,5 +42,8 @@ class HTTPNotifier(Notifier):
 
             ret.raise_for_status()
         except ConnectionError:
+            # traceback of requests connection errors are really long for
+            # such a simple thing
+            log.error('No connection to {}'.format(recipient))
         except:
             log.exception('Could not post message')
