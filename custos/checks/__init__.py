@@ -24,6 +24,7 @@ class Check(Thread, metaclass=ABCMeta):
     '''
     def __init__(self, queue=None):
         self.queue = queue
+        self.log = log.getChild(self.__class__.__name__)
         super().__init__()
 
     def start(self):
@@ -35,7 +36,7 @@ class Check(Thread, metaclass=ABCMeta):
             raise ValueError(msg)
 
         super().start()
-        log.info('Check %s running', self.__class__.__name__)
+        self.log.info('Check %s running', self.__class__.__name__)
 
     def debug(self, *args, **kwargs):
         self.queue.put(
@@ -97,7 +98,7 @@ class IntervalCheck(Check, metaclass=ABCMeta):
                 log.exception('Exception while running check')
             self.stop_event.wait(self.interval)
 
-        log.info('Check %s stopped', self.__class__.__name__)
+        self.log.info('Check %s stopped', self.__class__.__name__)
 
 
 class ScheduledCheck(Check, metaclass=ABCMeta):
@@ -126,3 +127,4 @@ class ScheduledCheck(Check, metaclass=ABCMeta):
 
     def stop(self):
         self.scheduler.shutdown()
+        self.log.info('Check %s stopped', self.__class__.__name__)
