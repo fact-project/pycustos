@@ -38,30 +38,25 @@ class Check(Thread, metaclass=ABCMeta):
         super().start()
         self.log.info('Check %s running', self.__class__.__name__)
 
-    def debug(self, *args, **kwargs):
+    def message(self, *args, **kwargs):
         self.queue.put(
-            Message(*args, level=DEBUG, check=self.__class__.__name__, **kwargs)
+            Message(*args, check=self.__class__.__name__, **kwargs)
         )
+
+    def debug(self, *args, **kwargs):
+        self.message(*args, level=DEBUG, **kwargs)
 
     def info(self, *args, **kwargs):
-        self.queue.put(
-            Message(*args, level=INFO, check=self.__class__.__name__, **kwargs)
-        )
+        self.message(*args, level=INFO, **kwargs)
 
     def warning(self, *args, **kwargs):
-        self.queue.put(
-            Message(*args, level=WARNING, check=self.__class__.__name__, **kwargs)
-        )
+        self.message(*args, level=WARNING, **kwargs)
 
     def error(self, *args, **kwargs):
-        self.queue.put(
-            Message(*args, level=ERROR, check=self.__class__.__name__, **kwargs)
-        )
+        self.message(*args, level=ERROR, **kwargs)
 
     def critical(self, *args, **kwargs):
-        self.queue.put(
-            Message(*args, level=CRITICAL, check=self.__class__.__name__, **kwargs)
-        )
+        self.message(*args, level=CRITICAL, **kwargs)
 
     @abstractmethod
     def stop(self):
