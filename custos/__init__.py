@@ -21,8 +21,18 @@ class Custos:
     '''
     The custos class holds checks and notifiers and sticks them together.
 
+    Parameters
+    ----------
+    checks: list
+        A list of Check instances
+    notifiers: list
+        A list of Notifier instances
+    notify_on_exception: None or bool
+        If not None, set notify_on_exception for all Checks
+        This will result in messages with level ERROR and category 'check_error'
+        if an exception occures during Check.check
     '''
-    def __init__(self, checks, notifiers):
+    def __init__(self, checks, notifiers, notify_on_exception=None):
         self.queue = Queue()
         self.notifiers = notifiers
         self.checks = checks
@@ -30,6 +40,9 @@ class Custos:
 
         for check in self.checks:
             check.queue = self.queue
+            if notify_on_exception is not None:
+                check.notify_on_exception = notify_on_exception
+
         self.stop_event = Event()
 
     def start(self):
