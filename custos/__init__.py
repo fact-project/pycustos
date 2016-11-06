@@ -1,5 +1,5 @@
 from queue import Empty, Queue
-from threading import Thread, Event
+from threading import Event
 import logging
 
 from .checks import Check, IntervalCheck, ScheduledCheck
@@ -14,7 +14,6 @@ from .notify import HTTPNotifier
 from .notify import LogNotifier
 
 
-
 log = logging.getLogger(__name__)
 
 
@@ -27,6 +26,8 @@ class Custos:
         self.queue = Queue()
         self.notifiers = notifiers
         self.checks = checks
+        self.log = log.getChild(self.__class__.__name__)
+
         for check in self.checks:
             check.queue = self.queue
         self.stop_event = Event()
@@ -35,7 +36,7 @@ class Custos:
         for check in self.checks:
             check.start()
 
-        log.info('%s running', self.__class__.__name__)
+        self.log.info('%s running', self.__class__.__name__)
 
     def run(self):
         self.start()
@@ -51,7 +52,7 @@ class Custos:
                 except (KeyboardInterrupt, SystemExit):
                     raise
                 except:
-                    log.exception(
+                    self.log.exception(
                         '%s failed to handle message',
                         notifier.__class__.__name__
                     )
@@ -60,7 +61,7 @@ class Custos:
         for check in self.checks:
             check.stop()
         self.stop_event.set()
-        log.info('%s stopped', self.__class__.__name__)
+        self.log.info('%s stopped', self.__class__.__name__)
 
     def __enter__(self):
         return self
