@@ -1,9 +1,11 @@
 from threading import Thread, Event
 from abc import ABCMeta, abstractmethod
 from apscheduler.schedulers.background import BlockingScheduler
+import logging
+from traceback import format_exc
+
 from ..notify.message import Message
 from ..notify.levels import DEBUG, INFO, WARNING, ERROR, CRITICAL
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -18,13 +20,16 @@ class Check(Thread, metaclass=ABCMeta):
 
     All Exceptions in this occuring during the call of `check` are
     catched and logged.
+    If notify_on_exception is True, also a message with category check_error
+    and level error will be pushed into the message queue.
 
     The thread has to be started with the .start() method,
     and will terminate after .stop() is called.
     '''
-    def __init__(self, queue=None):
+    def __init__(self, queue=None, notify_on_exception=True):
         self.queue = queue
         self.log = log.getChild(self.__class__.__name__)
+        self.notify_on_exception = notify_on_exception
         super().__init__()
 
     def start(self):
@@ -90,6 +95,13 @@ class IntervalCheck(Check, metaclass=ABCMeta):
             try:
                 self.check()
             except Exception as e:
+                if self.notify_on_exception:
+                    self.error(
+                        'Exception while running check. Traceback:\n {}'.format(
+                            format_exc()
+                        ),
+                        category='check_error',
+                    )
                 log.exception('Exception while running check')
             self.stop_event.wait(self.interval)
 
