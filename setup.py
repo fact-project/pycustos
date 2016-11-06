@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='custos',
-    version='0.0.2',
+    version='0.0.3',
     description='A framework for monitoring and notifying',
     url='https://github.com/fact-project/pycustos',
     author='Dominik Neise, Maximilian Noethe, Sebastian Mueller',
