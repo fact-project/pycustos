@@ -75,6 +75,19 @@ class Check(Thread, metaclass=ABCMeta):
     def run(self):
         pass
 
+    def wrapped_check(self, *args, **kwargs):
+        try:
+            self.check(*args, **kwargs)
+        except:
+            if self.notify_on_exception:
+                self.error(
+                    'Exception while running check. Traceback:\n {}'.format(
+                        format_exc()
+                    ),
+                    category='check_error',
+                )
+            self.log.exception('Exception while running check')
+
 
 class IntervalCheck(Check, metaclass=ABCMeta):
     '''
@@ -82,27 +95,17 @@ class IntervalCheck(Check, metaclass=ABCMeta):
 
     Child classes need to implement the check method.
     '''
-    def __init__(self, interval=None, queue=None):
+    def __init__(self, interval=None, queue=None, notify_on_exception=True):
         self.interval = interval
         self.stop_event = Event()
-        super().__init__(queue=queue)
+        super().__init__(queue=queue, notify_on_exception=notify_on_exception)
 
     def stop(self):
         self.stop_event.set()
 
     def run(self):
         while not self.stop_event.is_set():
-            try:
-                self.check()
-            except Exception as e:
-                if self.notify_on_exception:
-                    self.error(
-                        'Exception while running check. Traceback:\n {}'.format(
-                            format_exc()
-                        ),
-                        category='check_error',
-                    )
-                log.exception('Exception while running check')
+            self.wrapped_check()
             self.stop_event.wait(self.interval)
 
         self.log.info('Check %s stopped', self.__class__.__name__)
@@ -115,19 +118,19 @@ class ScheduledCheck(Check, metaclass=ABCMeta):
 
     Child classes need to implement the check method
     '''
-    def __init__(self, queue=None, **kwargs):
+    def __init__(self, queue=None, notify_on_exception=True, **kwargs):
         '''
         Create a new instance of this Check
         The kwargs are handed over to apscheduler.blocking.BlockingScheduler.add_job
         and decide when the checks are run. For example `trigger='cron', hour=8` will
         run this check every day at 8 o'clock
         '''
-        super().__init__(queue=queue)
+        super().__init__(queue=queue, notify_on_exception=notify_on_exception)
 
         self.scheduler = BlockingScheduler(
             job_defaults={'misfire_grace_time': 5*60}
         )
-        self.scheduler.add_job(self.check, **kwargs)
+        self.scheduler.add_job(self.wrapped_check, **kwargs)
 
     def run(self):
         self.scheduler.start()
