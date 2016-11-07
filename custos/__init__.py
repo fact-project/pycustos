@@ -1,5 +1,5 @@
 from queue import Empty, Queue
-from threading import Thread, Event
+from threading import Event
 import logging
 
 from .checks import Check, IntervalCheck, ScheduledCheck
@@ -14,7 +14,6 @@ from .notify import HTTPNotifier
 from .notify import LogNotifier
 
 
-
 log = logging.getLogger(__name__)
 
 
@@ -22,20 +21,35 @@ class Custos:
     '''
     The custos class holds checks and notifiers and sticks them together.
 
+    Parameters
+    ----------
+    checks: list
+        A list of Check instances
+    notifiers: list
+        A list of Notifier instances
+    notify_on_exception: None or bool
+        If not None, set notify_on_exception for all Checks
+        This will result in messages with level ERROR and category 'check_error'
+        if an exception occures during Check.check
     '''
-    def __init__(self, checks, notifiers):
+    def __init__(self, checks, notifiers, notify_on_exception=None):
         self.queue = Queue()
         self.notifiers = notifiers
         self.checks = checks
+        self.log = log.getChild(self.__class__.__name__)
+
         for check in self.checks:
             check.queue = self.queue
+            if notify_on_exception is not None:
+                check.notify_on_exception = notify_on_exception
+
         self.stop_event = Event()
 
     def start(self):
         for check in self.checks:
             check.start()
 
-        log.info('%s running', self.__class__.__name__)
+        self.log.info('%s running', self.__class__.__name__)
 
     def run(self):
         self.start()
@@ -51,7 +65,7 @@ class Custos:
                 except (KeyboardInterrupt, SystemExit):
                     raise
                 except:
-                    log.exception(
+                    self.log.exception(
                         '%s failed to handle message',
                         notifier.__class__.__name__
                     )
@@ -60,7 +74,7 @@ class Custos:
         for check in self.checks:
             check.stop()
         self.stop_event.set()
-        log.info('%s stopped', self.__class__.__name__)
+        self.log.info('%s stopped', self.__class__.__name__)
 
     def __enter__(self):
         return self
