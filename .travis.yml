@@ -5,20 +5,21 @@ python:
   - '3.5'
 
 install:
+  - pip install --upgrade setuptools py pip urllib3==1.18
   - pip install -r dev_requirements.txt
   - pip install .
 
 script:
-  - py.test
+  - python setup.py test
 
 deploy:
-  provider: pypi
-  distributions: sdist
-  server: https://testpypi.python.org/pypi
-  user: maxnoe
-  password:
-    secure: nX4F2woQrT8TNIVeD6b3/swOAlHNEmltWKT1dc+BCHcE9jP6IEiwq4Z5RI+ZYr/Uau3fJppVgKfrdMY7cGef7qcVGCyoV+w+KX58Y0lkgMmJaYIDcUIE7sI4I8mXm5Nq5EJzK1iWciITFtlRnRjW90MuIWDqgPVRxKTTBjqROIoWoJgBR2xNBzHnL8lBvXm28TDFXMdBnbhaFqxSGPTjqQzrx+cJ8so3WooRHsjRnSSWThTq4njhHDZicyCO0Z+HZ4V9CUK3CRB0lmu78bn9QrTvfVwfDj8WQt0remsgcGBDr55ovWT2MfhwXQ2dyfzZLR+WAzi2vSeJoLCnsHrj/lxZVmY/WBnR8sOWJQeiMAw6PaKm44/OPmp9cQMsEe/wfoCdK2weMDJl0G/BX9airKiezQGirsoCunJOc5ECsJDoFM2JRo4+kejNfRvnAFAZsTDB7bn9kjn1nttVE/ulJg9HVj3BrpCkoEqhKVHpKghzJvf+D0lzcm2sYLtbOLC/WMfV8MJHt964MdxMCNFEDAo7x0mdnP4kvLW9pBcGD697UhfNuNnt99IzqzzN6nPv0zx7dMRt3bLv8h2R9X4H9BotB3neGu+4M9/GVTVEXqErfcJ4HQ53T10EopFDVMaeuaB9b6OyaR5AvtEqV4BinxsdZzUXWg/MvWOwDR/nEFI=
-  on:
-    branch: master
-    tags: true
-    condition: $TRAVIS_PYTHON_VERSION = "3.5"
+  - provider: pypi
+    distributions: sdist
+    server: "https://testpypi.python.org/pypi"
+    user: maxnoe
+    password:
+      secure: nX4F2woQrT8TNIVeD6b3/swOAlHNEmltWKT1dc+BCHcE9jP6IEiwq4Z5RI+ZYr/Uau3fJppVgKfrdMY7cGef7qcVGCyoV+w+KX58Y0lkgMmJaYIDcUIE7sI4I8mXm5Nq5EJzK1iWciITFtlRnRjW90MuIWDqgPVRxKTTBjqROIoWoJgBR2xNBzHnL8lBvXm28TDFXMdBnbhaFqxSGPTjqQzrx+cJ8so3WooRHsjRnSSWThTq4njhHDZicyCO0Z+HZ4V9CUK3CRB0lmu78bn9QrTvfVwfDj8WQt0remsgcGBDr55ovWT2MfhwXQ2dyfzZLR+WAzi2vSeJoLCnsHrj/lxZVmY/WBnR8sOWJQeiMAw6PaKm44/OPmp9cQMsEe/wfoCdK2weMDJl0G/BX9airKiezQGirsoCunJOc5ECsJDoFM2JRo4+kejNfRvnAFAZsTDB7bn9kjn1nttVE/ulJg9HVj3BrpCkoEqhKVHpKghzJvf+D0lzcm2sYLtbOLC/WMfV8MJHt964MdxMCNFEDAo7x0mdnP4kvLW9pBcGD697UhfNuNnt99IzqzzN6nPv0zx7dMRt3bLv8h2R9X4H9BotB3neGu+4M9/GVTVEXqErfcJ4HQ53T10EopFDVMaeuaB9b6OyaR5AvtEqV4BinxsdZzUXWg/MvWOwDR/nEFI=
+    on:
+      branch: master
+      tags: true
+      condition: $TRAVIS_PYTHON_VERSION = "3.5"

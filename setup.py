@@ -17,11 +17,7 @@ setup(
         'requests',
         'apscheduler',
     ],
-    test_requires=[
-        'pytest',
-    ],
-    entry_points={
-        'console_scripts': [],
-    },
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest>=3.0.0'],
     zip_safe=False,
 )
