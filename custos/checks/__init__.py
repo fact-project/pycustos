@@ -25,12 +25,15 @@ class Check(Thread, metaclass=ABCMeta):
 
     The thread has to be started with the .start() method,
     and will terminate after .stop() is called.
+
+    You can give the check a name, if None, the class name will be used
     '''
-    def __init__(self, queue=None, notify_on_exception=True):
+    def __init__(self, queue=None, notify_on_exception=True, name=None):
+        super().__init__()
         self.queue = queue
         self.log = log.getChild(self.__class__.__name__)
         self.notify_on_exception = notify_on_exception
-        super().__init__()
+        self.name = name or self.__class__.__name__
 
     def start(self):
         if self.queue is None:
@@ -45,7 +48,7 @@ class Check(Thread, metaclass=ABCMeta):
 
     def message(self, *args, **kwargs):
         self.queue.put(
-            Message(*args, check=self.__class__.__name__, **kwargs)
+            Message(*args, check=self.name, **kwargs)
         )
 
     def debug(self, *args, **kwargs):
@@ -95,10 +98,10 @@ class IntervalCheck(Check, metaclass=ABCMeta):
 
     Child classes need to implement the check method.
     '''
-    def __init__(self, interval=None, queue=None, notify_on_exception=True):
+    def __init__(self, interval=None, queue=None, notify_on_exception=True, name=None):
+        super().__init__(queue=queue, notify_on_exception=notify_on_exception, name=name)
         self.interval = interval
         self.stop_event = Event()
-        super().__init__(queue=queue, notify_on_exception=notify_on_exception)
 
     def stop(self):
         self.stop_event.set()
@@ -118,14 +121,14 @@ class ScheduledCheck(Check, metaclass=ABCMeta):
 
     Child classes need to implement the check method
     '''
-    def __init__(self, queue=None, notify_on_exception=True, **kwargs):
+    def __init__(self, queue=None, notify_on_exception=True, name=None, **kwargs):
         '''
         Create a new instance of this Check
         The kwargs are handed over to apscheduler.blocking.BlockingScheduler.add_job
         and decide when the checks are run. For example `trigger='cron', hour=8` will
         run this check every day at 8 o'clock
         '''
-        super().__init__(queue=queue, notify_on_exception=notify_on_exception)
+        super().__init__(queue=queue, notify_on_exception=notify_on_exception, name=name)
 
         self.scheduler = BlockingScheduler(
             job_defaults={'misfire_grace_time': 5*60}

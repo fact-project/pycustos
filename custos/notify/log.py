@@ -12,8 +12,8 @@ class LogNotifier(Notifier):
     def notify(self, recipient, msg):
         log.log(
             msg.level,
-            'Message: {}    For: {}'.format(
+            'Check: {} - Message: {}'.format(
+                msg.check,
                 msg.text,
-                recipient,
-                )
             )
+        )
