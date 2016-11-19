@@ -2,7 +2,6 @@ from threading import Thread, Event
 from abc import ABCMeta, abstractmethod
 from apscheduler.schedulers.background import BlockingScheduler
 import logging
-from traceback import format_exc
 
 from ..notify.message import Message
 from ..notify.levels import DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -81,12 +80,10 @@ class Check(Thread, metaclass=ABCMeta):
     def wrapped_check(self, *args, **kwargs):
         try:
             self.check(*args, **kwargs)
-        except:
+        except Exception as e:
             if self.notify_on_exception:
                 self.error(
-                    'Exception while running check. Traceback:\n {}'.format(
-                        format_exc()
-                    ),
+                    'Exception while running check {}: {}'.format(self.name, str(e)),
                     category='check_error',
                 )
             self.log.exception('Exception while running check')
