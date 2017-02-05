@@ -20,7 +20,7 @@ echo_url = 'http://twimlets.com/echo'
 message_url = 'http://twimlets.com/message'
 
 hangup_twiml = '''<Response>
-  <Hangup>
+  <Hangup/>
 </Response>
 '''
 hangup_url = build_url(echo_url, {'Twiml': hangup_twiml})
