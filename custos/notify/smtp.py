@@ -15,7 +15,16 @@ log = logging.getLogger(__name__)
 
 
 class SMTPNotifier(Notifier):
-    def __init__(self, host, port, user, password, sender, default_subject, **kwargs):
+    def __init__(
+            self,
+            host,
+            port,
+            sender,
+            default_subject,
+            user=None,
+            password=None,
+            **kwargs
+    ):
         self.sender = sender
         self.default_subject = default_subject
         self.server = smtplib.SMTP_SSL(host, port)
