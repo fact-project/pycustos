@@ -1,7 +1,7 @@
 from setuptools import setup
 
 extras_require = {
-    'twilio': ['twilio>=6'],
+    'twilio': ['twilio~=6.0'],
     'telegram': ['telepot'],
 }
 extras_require['all'] = extras_require['twilio'] + extras_require['telegram']
