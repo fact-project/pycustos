@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from collections import Mapping
+from collections.abc import Mapping
 import logging
 
 from .levels import INFO
