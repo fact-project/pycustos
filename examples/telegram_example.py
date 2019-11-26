@@ -35,10 +35,5 @@ if __name__ == '__main__':
         categories={'Linux', 'Windows'},
     )
 
-    custos = Custos(
-        checks=[hello_world],
-        notifiers=[telegram],
-    )
-
     with Custos(checks=[hello_world], notifiers=[telegram]) as custos:
         custos.run()

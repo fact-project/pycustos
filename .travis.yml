@@ -1,13 +1,13 @@
 language: python
 
 python:
-  - '3.4'
-  - '3.5'
+  - '3.6'
+  - '3.7'
+  - '3.8'
 
 install:
-  - pip install --upgrade setuptools py pip urllib3==1.18
-  - pip install -r dev_requirements.txt
-  - pip install .
+  - pip install --upgrade setuptools py pip
+  - pip install .[all]
 
 script:
   - python setup.py test
@@ -22,4 +22,4 @@ deploy:
     on:
       branch: master
       tags: true
-      condition: $TRAVIS_PYTHON_VERSION = "3.5"
+      condition: $TRAVIS_PYTHON_VERSION = "3.7"
