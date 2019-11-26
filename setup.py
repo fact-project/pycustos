@@ -4,7 +4,7 @@ extras_require = {
     'twilio': ['twilio>=6'],
     'telegram': ['telepot'],
 }
-extras_require['all'] = extras_require['twilio'] + extras_require['telepot']
+extras_require['all'] = extras_require['twilio'] + extras_require['telegram']
 
 setup(
     name='custos',
