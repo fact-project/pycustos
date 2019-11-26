@@ -13,12 +13,12 @@ script:
   - python setup.py test
 
 deploy:
-  - provider: pypi
-    distributions: sdist
-    user: fact-deploybot
-    password:
-      secure: "KPjogBL/F/h/pAASSd8XTkl/fZQFV467GlIPRHhUMoJROFzNE4TxbC36DYXQZ5GMXjn6iD0sgklUqGdqTTAFdvAJ8Pp9UxKTIxx8DDSVYT0SBzmSaWMUxAI0eGxaZ2ln5I9BVbXXGemrgVXXoTGhQ5ErqucmUJURxkxcS91JQSaqcLMJAhHbAmV4+CW99mL821SpzEE0B8dC7zP2JrFfhJdgbt/Ny1KVWDaev6fVXwP7IPs83h8j/sTqR5nCaZtCAkDBN6ayY4CTQe7uMyZZkauqkhLwMuJgfFGlG1ZuSvAyYlANmhIy/MPAsWuNbXrv/iF7XKNSRAwfb0FajOK6s9muj+a6tI5M2kvhVLKZ8JK6n8CJbsSBmZCN+iLSKE5I33vjA1Nl97p0S+F0+1poJKy9gJuulGJLtVr9zJZq6jv/m6dUEMkNYHzZMul19n3Q30jdtTnuv3qjYwUaYRbYNP91KXVZlJYYPOAjKDF5No2AoKwRUzmoM6zhCJcQKf+5bCPe6jcNpie/KdMtogKK9qYVTxGBecg2HFwBo7ekWOVRzHzlkgYJohNAy22A8EDkqsSgY6HF3/AW5MmQQdua55G8wedRqg5YCQq+2PU7NECd9fqHs6n0NblLxdubsD8S49oiO6V8+nLuadH8DTZgXU2CHUHtzA1z5FqYt6gqyyo="
-    on:
-      branch: master
-      tags: true
-      condition: $TRAVIS_PYTHON_VERSION = "3.7"
+  provider: pypi
+  distributions: sdist
+  user: __token__
+  on:
+    branch: master
+    tags: true
+    condition: $TRAVIS_PYTHON_VERSION = "3.7"
+  password:
+    secure: CeFMx8LxnY9RPIq9hB5VtpfF0OX99ZvhqwI9pUHfJGJfccugR09E40tjAbmkGFV+Q7H+bC46U3aJRzvl+66mKr7yBt8H5npIqLkzCvMYXsL9yWpzVggz6/tbmchzJFQbe0OcJnZvThTuyJjyhLUnhCSPh3w9EJsdblSEnjDXlAsPObBvOgGlkg0QSd/a0j4A9iR+jK4fLB7+JnR2cjejEX6NKULdqhRR4wl+YcnZQo96UstAQ2bHPPYE1gqsQZlYAk6IhV54DrIGGr0xGe8Rt746z/gkBPZyHx40gAimhoWe43xjZj9RNZmcfCalcflh1Pc/r/Yc0qJG9v7zG+KJG2b8w+EBjnZZvs0mg1W4CEE27Vi75eq0UqmcO81ej0+6YUFSjjCGJK9Dyyro6ZM5w2BjxqqNTHyItk516iUEN3HJ9G9ltrLiNw2gaV2fm51pIXE9j0pf9JgC2o0Min495I9AUOFEFUdiS7DPVc+sx21ELJntF5KLDvBOrPWurpk4MfhuzTfIWBn923dr33J/Gq+8uyQP01tm04N6MgNz4OhXT/xiuvTE86zkDmlhPNvEgkj4fjijHKHdpSk8GfdAKYcKSJarYabDbi3P0iTxd7YfcC5OUJoNdOAGh1aWGbazOaK0ZaNvLgAtyl4uEtHp/HLKmlo3L4zGu/Vc1qawLUE=
