@@ -6,10 +6,14 @@ extras_require = {
 }
 extras_require['all'] = extras_require['twilio'] + extras_require['telegram']
 
+with open('README.rst') as f:
+    long_description = f.read()
+
 setup(
     name='custos',
-    version='0.1.0',
+    version='0.1.1',
     description='A framework for monitoring and notifying',
+    long_description=long_description,
     url='https://github.com/fact-project/pycustos',
     author='Dominik Neise, Maximilian Noethe, Sebastian Mueller',
     author_email='maximilian.noethe@tu-dortmund.de',
